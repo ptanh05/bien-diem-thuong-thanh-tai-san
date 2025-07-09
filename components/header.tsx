@@ -57,6 +57,12 @@ export function Header() {
             >
               Lịch sử
             </Link>
+            <Link
+              href="/partners"
+              className="text-gray-700 hover:text-green-600 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-green-50"
+            >
+              Đối tác
+            </Link>
           </nav>
 
           <div className="hidden lg:flex items-center space-x-4">
@@ -108,6 +114,12 @@ export function Header() {
                 className="text-gray-700 hover:text-green-600 transition-colors font-medium px-4 py-3 rounded-lg hover:bg-green-50"
               >
                 Lịch sử
+              </Link>
+              <Link
+                href="/partners"
+                className="text-gray-700 hover:text-green-600 transition-colors font-medium px-4 py-3 rounded-lg hover:bg-green-50"
+              >
+                Đối tác
               </Link>
               <div className="pt-4 px-4">
                 <WalletConnect />
