@@ -1,115 +1,127 @@
-"use client"
+"use client";
 
-import { useAccount, useConnect, useDisconnect } from "wagmi"
-import { Button } from "@/components/ui/button"
+import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
-import { Wallet, CheckCircle, Copy, LogOut, ChevronDown, ExternalLink, AlertCircle } from "lucide-react"
-import { useState, useEffect } from "react"
+} from "@/components/ui/dropdown-menu";
+import {
+  Wallet,
+  CheckCircle,
+  Copy,
+  LogOut,
+  ChevronDown,
+  ExternalLink,
+  AlertCircle,
+} from "lucide-react";
+import { useState, useEffect } from "react";
 
 export function WalletConnect() {
-  const { address, isConnected } = useAccount()
-  const { connect, connectors, isPending } = useConnect()
-  const { disconnect } = useDisconnect()
-  const [copied, setCopied] = useState(false)
-  const [availableWallets, setAvailableWallets] = useState<any[]>([])
-  const [unavailableWallets, setUnavailableWallets] = useState<any[]>([])
+  const { address, isConnected } = useAccount();
+  const { connect, connectors, isPending } = useConnect();
+  const { disconnect } = useDisconnect();
+  const [copied, setCopied] = useState(false);
+  const [availableWallets, setAvailableWallets] = useState<any[]>([]);
+  const [unavailableWallets, setUnavailableWallets] = useState<any[]>([]);
 
   useEffect(() => {
     const checkWalletAvailability = () => {
-      const available: any[] = []
-      const unavailable: any[] = []
+      const available: any[] = [];
+      const unavailable: any[] = [];
 
       connectors.forEach((connector) => {
         // Check if wallet is installed based on connector type and window objects
-        let isInstalled = false
+        let isInstalled = false;
 
         switch (connector.name.toLowerCase()) {
           case "metamask":
-            isInstalled = typeof window !== "undefined" && (window as any).ethereum?.isMetaMask === true
-            break
+            isInstalled =
+              typeof window !== "undefined" &&
+              (window as any).ethereum?.isMetaMask === true;
+            break;
           case "coinbase wallet":
             isInstalled =
               typeof window !== "undefined" &&
               ((window as any).ethereum?.isCoinbaseWallet === true ||
-                (window as any).coinbaseWalletExtension !== undefined)
-            break
+                (window as any).coinbaseWalletExtension !== undefined);
+            break;
           case "walletconnect":
             // WalletConnect is always available as it's a protocol
-            isInstalled = true
-            break
+            isInstalled = true;
+            break;
           case "injected":
             // Check for any injected wallet
-            isInstalled = typeof window !== "undefined" && (window as any).ethereum !== undefined
-            break
+            isInstalled =
+              typeof window !== "undefined" &&
+              (window as any).ethereum !== undefined;
+            break;
           default:
             // For other connectors, check if they're ready
-            isInstalled = connector.ready || false
-            break
+            isInstalled = connector.ready || false;
+            break;
         }
 
         if (isInstalled) {
-          available.push(connector)
+          available.push(connector);
         } else {
-          unavailable.push(connector)
+          unavailable.push(connector);
         }
-      })
+      });
 
-      setAvailableWallets(available)
-      setUnavailableWallets(unavailable)
-    }
+      setAvailableWallets(available);
+      setUnavailableWallets(unavailable);
+    };
 
     // Check immediately and also when window loads
-    checkWalletAvailability()
+    checkWalletAvailability();
 
     if (typeof window !== "undefined") {
-      window.addEventListener("load", checkWalletAvailability)
-      return () => window.removeEventListener("load", checkWalletAvailability)
+      window.addEventListener("load", checkWalletAvailability);
+      return () => window.removeEventListener("load", checkWalletAvailability);
     }
-  }, [connectors])
+  }, [connectors]);
 
   const copyAddress = async () => {
     if (address) {
-      await navigator.clipboard.writeText(address)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      await navigator.clipboard.writeText(address);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
-  }
+  };
 
   const formatAddress = (addr: string) => {
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`
-  }
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  };
 
   const getConnectorIcon = (connectorName: string) => {
     switch (connectorName.toLowerCase()) {
       case "metamask":
-        return "🦊"
+        return "🦊";
       case "coinbase wallet":
-        return "🔵"
+        return "🔵";
       case "walletconnect":
-        return "🔗"
+        return "🔗";
       case "injected":
-        return "💼"
+        return "💼";
       default:
-        return "💼"
+        return "💼";
     }
-  }
+  };
 
   const getInstallLink = (connectorName: string) => {
     switch (connectorName.toLowerCase()) {
       case "metamask":
-        return "https://metamask.io/download/"
+        return "https://metamask.io/download/";
       case "coinbase wallet":
-        return "https://www.coinbase.com/wallet"
+        return "https://www.coinbase.com/wallet";
       default:
-        return "#"
+        return "#";
     }
-  }
+  };
 
   if (isConnected && address) {
     return (
@@ -124,18 +136,31 @@ export function WalletConnect() {
             <ChevronDown className="w-4 h-4 ml-2" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48 bg-black/90 border-white/20">
-          <DropdownMenuItem onClick={copyAddress} className="text-white hover:bg-white/10 cursor-pointer">
-            {copied ? <CheckCircle className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+        <DropdownMenuContent
+          align="end"
+          className="w-48 bg-black/90 border-white/20"
+        >
+          <DropdownMenuItem
+            onClick={copyAddress}
+            className="text-black hover:bg-white/10 cursor-pointer"
+          >
+            {copied ? (
+              <CheckCircle className="w-4 h-4 mr-2" />
+            ) : (
+              <Copy className="w-4 h-4 mr-2" />
+            )}
             {copied ? "Đã sao chép!" : "Sao chép địa chỉ"}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => disconnect()} className="text-red-400 hover:bg-red-500/10 cursor-pointer">
+          <DropdownMenuItem
+            onClick={() => disconnect()}
+            className="text-red-400 hover:bg-red-500/10 cursor-pointer"
+          >
             <LogOut className="w-4 h-4 mr-2" />
             Ngắt kết nối
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    )
+    );
   }
 
   return (
@@ -143,7 +168,7 @@ export function WalletConnect() {
       <DropdownMenuTrigger asChild>
         <Button
           disabled={isPending}
-          className="bg-white/10 border border-white/20 text-white hover:bg-white/20"
+          className="bg-white/10 border border-white/20 text-black hover:bg-white/20"
           variant="outline"
         >
           <Wallet className="w-4 h-4 mr-2" />
@@ -151,16 +176,21 @@ export function WalletConnect() {
           <ChevronDown className="w-4 h-4 ml-2" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64 bg-black/90 border-white/20">
+      <DropdownMenuContent
+        align="end"
+        className="w-64 bg-black/90 border-white/20"
+      >
         {availableWallets.length > 0 && (
           <>
-            <div className="px-2 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-wider">Ví có sẵn</div>
+            <div className="px-2 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-wider">
+              Ví có sẵn
+            </div>
             {availableWallets.map((connector) => (
               <DropdownMenuItem
                 key={connector.uid}
                 onClick={() => connect({ connector })}
                 disabled={isPending}
-                className="text-white hover:bg-white/10 cursor-pointer"
+                className="text-black hover:bg-white/10 cursor-pointer"
               >
                 <span className="mr-2">{getConnectorIcon(connector.name)}</span>
                 <div className="flex-1">
@@ -174,14 +204,18 @@ export function WalletConnect() {
 
         {unavailableWallets.length > 0 && (
           <>
-            {availableWallets.length > 0 && <DropdownMenuSeparator className="bg-white/10" />}
+            {availableWallets.length > 0 && (
+              <DropdownMenuSeparator className="bg-white/10" />
+            )}
             <div className="px-2 py-1.5 text-xs font-medium text-gray-400 uppercase tracking-wider">
               Ví chưa cài đặt
             </div>
             {unavailableWallets.map((connector) => (
               <DropdownMenuItem
                 key={connector.uid}
-                onClick={() => window.open(getInstallLink(connector.name), "_blank")}
+                onClick={() =>
+                  window.open(getInstallLink(connector.name), "_blank")
+                }
                 className="text-gray-400 hover:bg-white/5 cursor-pointer"
               >
                 <span className="mr-2">{getConnectorIcon(connector.name)}</span>
@@ -209,5 +243,5 @@ export function WalletConnect() {
         )}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
