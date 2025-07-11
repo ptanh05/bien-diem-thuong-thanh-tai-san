@@ -5,6 +5,20 @@ import * as React from "react"
 
 import type { ToastActionElement, ToastProps } from "@/components/ui/toast"
 
+import { JsonRpcProvider, Contract } from "ethers";
+import artifact from "@/lib/contracts/GomGomTokenFactory.json" assert { type: "json" };
+
+const { abi } = artifact;                     // <-- lấy đúng phần ABI
+const RPC_URL = "https://sepolia-rpc.lisk.com";
+const CONTRACT_ADDRESS = "0x8d415aCfDdbd2da2F4F292D9eb3Ad30b0F499d49";
+
+(async () => {
+  const provider = new JsonRpcProvider(RPC_URL);
+  const contract  = new Contract(CONTRACT_ADDRESS, abi, provider);  // dùng abi
+  const count     = await contract.getBrandCount();
+  console.log("Brand count:", count.toString());
+})();
+
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
 

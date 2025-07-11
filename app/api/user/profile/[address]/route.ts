@@ -4,17 +4,8 @@ export async function GET(request: NextRequest, { params }: { params: { address:
   try {
     const { address } = params
 
-    // TODO: Integrate with blockchain/database
-    const mockProfile = {
-      address,
-      totalValue: "0",
-      ethBalance: "0",
-      creditScore: 0,
-      joinedAt: Date.now(),
-      lastActive: Date.now(),
-    }
-
-    return NextResponse.json(mockProfile)
+    // TODO: Kết nối blockchain/database thực tế ở đây
+    return NextResponse.json(null)
   } catch (error) {
     console.error("Error fetching user profile:", error)
     return NextResponse.json({ error: "Failed to fetch user profile" }, { status: 500 })
